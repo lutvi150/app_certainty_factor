@@ -4,8 +4,8 @@
   @if (Auth::check())
     <li><a href="admin"><i class="fa fa-user"></i> <span>Admin</span></a><li>
       <div class="container"></div>
-    <li><a  href="penyakit"><i class="fa fa-bug"></i> <span>Penyakit</span></a><li>
-      <div class="container"></div>
+      <li><a  href="penyakit"><i class="fa fa-bug"></i> <span>Penyakit</span></a><li>
+        <div class="container"></div>
     <li><a  href="gejala"><i class="fa fa-eyedropper"></i> <span>Gejala</span></a><li>
       <div class="container"></div>
     <li><a  href="pengetahuan"><i class="fa fa-flask"></i> <span>Pengetahuan</span></a><li>

@@ -22,6 +22,7 @@
     <meta charset="UTF-8">
     <title>{{ env('APP_NAME') }}</title>
     <link rel="stylesheet" href="{{ asset('assets/login/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
 </head>
 
 <body>
@@ -37,9 +38,10 @@
         <div class="info">
             <h4><i class="fa fa-paper-plane"></i> Login Pakar</h4><br>
         </div>
-        <form class="login-form" action="login.php" method="post" name="text_form"
+        <form class="login-form" action="{{ route('auth-verification') }}" method="post" name="text_form"
             onsubmit="return Blank_TextField_Validator()">
-            <input type="text" name="username" id="username" placeHolder="&#xf007;  Username"
+            @csrf
+            <input type="text" name="email" id="email" placeHolder="&#xf007;  email"
                 style="font-family:Arial, FontAwesome" />
             <input type="password" name="password" id="password" placeHolder="&#xf023;  Password"
                 style="font-family:Arial, FontAwesome" />

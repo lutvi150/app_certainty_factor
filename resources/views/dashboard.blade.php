@@ -43,8 +43,14 @@
     <script src="{{asset('assets/Flot/jquery.flot.categories.js')}}"></script>
     <!-- AdminLTE App -->
     <script src="{{asset('assets/app.js')}}"></script>
+    <link rel="stylesheet" href="{{asset('css/app.css')}}">
+<script src="{{asset('js/app.js')}}"></script>
 </head>
-
+<style>
+    .text-error{
+        color: #a94442;
+    }
+</style>
 <body id="pakarayam" class="hold-transition skin-purple-light sidebar-mini">
     <div class="wrapper">
         <!-- Main Header -->
@@ -69,16 +75,16 @@
 
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <img src="gambar/admin/admin.png" class="user-image" alt="User Image">
-                               username
+                                <img src="{{ asset('assets/banner/grandfther.png') }}" class="user-image" alt="User Image">
+                               {{ Auth::user()->nama }}
                                 <span class="hidden-xs">user </span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header">
-                                    <img src="{{asset('gambar/admin/admin.png')}}" class="img-circle" alt="User Image">
+                                    <img src="{{asset('assets/banner/grandfther.png')}}" class="img-circle" alt="User Image">
                                     <p>
-                                        Login sebagai Admin
+                                        Login sebagai {{ Auth::user()->nama }}
                                         <small>Pakar dari Centainty Factor</small>
                                     </p>
                                 </li>
@@ -98,7 +104,7 @@
                                     </div>
                                     <div class="pull-right">
                                         <a class="btn btn-default btn-flat"
-                                            href="JavaScript: confirmIt('Anda yakin akan logout dari aplikasi ?','logout.php','','','','u','n','Self','Self')"
+                                            href="JavaScript: confirmIt('Anda yakin akan logout dari aplikasi ?','{{ route('logout') }}','','','','u','n','Self','Self')"
                                             onMouseOver="self.status = ''; return true"
                                             onMouseOut="self.status = ''; return true"><i class="fa fa-sign-out"></i>
                                             <span>LogOut</span></a>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,20 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('/', [Dashboard::class, 'Dashboard']);
+Route::get('/', [Dashboard::class, 'Dashboard'])->name('dasrboard');
 Route::get('/view-login', [Dashboard::class, 'viewLogin'])->name('view-login');
+Route::post('/auth-verification', [Dashboard::class, 'verification'])->name('auth-verification');
+// use for error page
+Route::view('/error', '404');
+Route::get('/logout', function () {
+    Auth::logout();
+    return redirect('/');
+})->name('logout');
+// use for admin
+Route::get('/admin', [Dashboard::class, 'DashboardAdmin'])->name('admin');
+Route::get('/gejala', [Dashboard::class, 'gejala'])->name('gejala');
+Route::get('/gejala-add', [Dashboard::class, 'gejalaAdd'])->name('gejala-add');
+Route::get('/gejala-edit/{id}', [Dashboard::class, 'gejalaEdit'])->name('gejala-edit');
+Route::get('/penyakit', [Dashboard::class, 'penyakit'])->name('penyakit');
+Route::get('/penyakit-add', [Dashboard::class, 'penyakitAdd'])->name('penyakit-add');
+Route::get('/penyakit-edit/{id}', [Dashboard::class, 'penyakitEdit'])->name('penyakit-edit');

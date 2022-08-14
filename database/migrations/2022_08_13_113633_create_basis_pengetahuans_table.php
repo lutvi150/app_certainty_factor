@@ -13,8 +13,12 @@ class CreateBasisPengetahuansTable extends Migration
      */
     public function up()
     {
-        Schema::create('basis_pengetahuans', function (Blueprint $table) {
-            $table->id();
+        Schema::create('basis_pengetahuan', function (Blueprint $table) {
+            $table->id('id_pengetahuan');
+            $table->integer('id_penyakit');
+            $table->integer('id_gejala');
+            $table->double('mb', 11, 1);
+            $table->double('md', 11, 1);
             $table->timestamps();
         });
     }
