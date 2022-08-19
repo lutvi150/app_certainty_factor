@@ -12,11 +12,11 @@
     <link href="{{ asset('css/font-awesome-4.2.0/font-awesome-4.2.0/css/font-awesome.min.css') }}" rel="stylesheet">
     <link href="{{asset('css/owl-carousel/owl.carousel.css')}}" rel="stylesheet" media="all">
     <link href="{{asset('css/owl-carousel/owl.theme.css')}}" rel="stylesheet" media="all">
-    <link href="{{asset('css/magnific-popup.css')}}" type="text/css')}}" rel="stylesheet" media="all" />
-    <link href="{{asset('css/font.css')}}" rel="stylesheet" type="text/css')}}" media="all">
-    <link href="{{asset('css/fontello.css')}}" rel="stylesheet" type="text/css')}}" media="all">
-    <link href="{{asset('css/main.css')}}" rel="stylesheet" type="text/css')}}" media="all" />
-    <link rel=stylesheet href="{{asset('css/paging.css')}}" type="text/css')}}" media=screen>
+    <link href="{{asset('css/magnific-popup.css')}}" type="text/css" rel="stylesheet" media="all" />
+    <link href="{{asset('css/font.css')}}" rel="stylesheet" type="text/css" media="all">
+    <link href="{{asset('css/fontello.css')}}" rel="stylesheet" type="text/css" media="all">
+    <link href="{{asset('css/main.css')}}" rel="stylesheet" type="text/css" media="all" />
+    <link rel=stylesheet href="{{asset('css/paging.css')}}" type="text/css" media=screen>
     <!-- Bootstrap 3.3.5 -->
     <link rel="stylesheet" href="{{asset('assets/bootstrap.css')}}">
     <!-- Theme style -->
@@ -104,9 +104,7 @@
                                     </div>
                                     <div class="pull-right">
                                         <a class="btn btn-default btn-flat"
-                                            href="JavaScript: confirmIt('Anda yakin akan logout dari aplikasi ?','{{ route('logout') }}','','','','u','n','Self','Self')"
-                                            onMouseOver="self.status = ''; return true"
-                                            onMouseOut="self.status = ''; return true"><i class="fa fa-sign-out"></i>
+                                            href="{{ route('logout') }}"><i class="fa fa-sign-out"></i>
                                             <span>LogOut</span></a>
                                     </div>
                                 </li>

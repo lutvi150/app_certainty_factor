@@ -3,8 +3,8 @@
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td><input class="btn bg-olive margin" type="button" name="tambah" value="Tambah Penyakit"
-                            onclick="window.location.href='{{ route('penyakit-add') }}';"><input type="text" name="keyword"
+                    <td><input class="btn bg-olive margin" type="button" name="tambah" value="Tambah Basis Pengetahuan"
+                            onclick="window.location.href='{{ route('pengetahuan-add') }}';"><input type="text" name="keyword"
                             style="margin-left: 10px;" placeholder="Ketik dan tekan cari..." class="form-control"
                             value=""> <input class="btn bg-olive margin" type="submit" value="   Cari   " name="Go">
                     </td>
@@ -15,23 +15,25 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Nama Penyakit</th>
-                <th>Detail Penyakit</th>
-                <th>Saran Penyakit</th>
+                <th>Penyakit</th>
+                <th>Gejala</th>
+                <th>MB</th>
+                <th>MD</th>
                 <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($penyakit as $key=> $item)
+            @foreach ($pengetahuan as $key=> $item)
             <tr class="light">
                 <td align="center">{{ $key+1 }}</td>
                 <td>{{ $item->nama_penyakit }}</td>
-                <td>{{ $item->detail_penyakit }}</td>
-                <td>{{ $item->saran_penyakit }}</td>
+                <td>{{ $item->nama_gejala }}</td>
+                <td>{{ $item->mb }}</td>
+                <td>{{ $item->md }}</td>
                 <td align="center">
-                    <a type="button" class="btn btn-block btn-success" href="{{ route('penyakit-edit',$item->id_penyakit) }}"><i
+                    <a type="button" class="btn btn-block btn-success" href="{{ route('pengetahuan-edit',$item->id_pengetahuan) }}"><i
                             class="fa fa-pencil-square-o" aria-hidden="true"></i> Ubah </a> &nbsp;
-                    <button onclick="deleteData({{ $item->id_penyakit }})" type="button" class="btn btn-block btn-danger"
+                    <button onclick="deleteData({{ $item->id_pengetahuan }})" type="button" class="btn btn-block btn-danger"
                         ></i> Hapus</button>
                 </td>
             </tr>
@@ -55,8 +57,8 @@
             if (willDelete) {
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('api-penyakitDelete') }}",
-                    data: {id_penyakit: id},
+                    url: "{{ route('api-pengetahuanDelete') }}",
+                    data: {id_pengetahuan: id},
                     dataType: "JSON",
                     success: function (response) {
                         swal("Data Berhasil Dihapus!", {

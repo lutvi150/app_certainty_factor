@@ -5,18 +5,18 @@
             <tbody>
                 <tr>
                     <td width="120">Nama Penyakit</td>
-                    <td><input autocomplete="off" type="text" placeholder="Masukkan penyakit baru..."
-                            class="form-control" name="nama_penyakit" size="30"><br><span class="text-error enama_penyakit"></span></td>
+                    <td><input type="text" hidden name="id_penyakit" value="{{ $penyakit->id_penyakit }}"><input autocomplete="off" type="text" placeholder="Masukkan penyakit baru..."
+                            class="form-control" name="nama_penyakit" value="{{ $penyakit->nama_penyakit }}" size="30"><br><span class="text-error enama_penyakit"></span></td>
                 </tr>
                 <tr>
                     <td width="120">Detail Penyakit</td>
                     <td> <textarea rows="4" cols="50" class="form-control" name="det_penyakit" type="text"
-                            placeholder="Masukkan detail penyakit baru..."></textarea></td>
+                            placeholder="Masukkan detail penyakit baru...">{{ $penyakit->detail_penyakit }}</textarea></td>
                 </tr>
                 <tr>
                     <td width="120">Saran Penyakit</td>
                     <td><textarea rows="4" cols="50" class="form-control" name="srn_penyakit" type="text"
-                            placeholder="Masukkan saran penyakit baru..."></textarea></td>
+                            placeholder="Masukkan saran penyakit baru...">{{ $penyakit->saran_penyakit }}</textarea></td>
                 </tr>
                 <tr>
                     <td></td>
@@ -39,13 +39,14 @@
         } else {
             $('.enama_penyakit').html('');
             $.ajax({
-                url: '{{ route('api-penyakitStore') }}',
+                url: "{{ route('api-penyakitUpdate') }}",
                 type: 'POST',
                 data: {
                     '_token': '{{ csrf_token() }}',
                     'nama_penyakit': nama_penyakit,
                     'detail_penyakit': det_penyakit,
-                    'saran_penyakit': srn_penyakit
+                    'saran_penyakit': srn_penyakit,
+                    'id_penyakit': '{{ $penyakit->id_penyakit }}'
                 },
                 success: function (data) {
                     $("#storeData").text('Simpan');
@@ -55,9 +56,6 @@
                             position:'bottomCenter',
                             message: 'Data berhasil di simpan!',
                         });
-                        $("input[name=nama_penyakit]").val('');
-                        $("textarea[name=det_penyakit]").val('');
-                        $("textarea[name=srn_penyakit]").val('');
                     } else if(data.status == 'failed') {
                         $(".enama_penyakit").html(data.message);
                     } else if(data.status=='data_ready'){

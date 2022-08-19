@@ -23,5 +23,5 @@
     <li><a  href="keterangan"><i class="fa fa-commenting-o"></i> <span>Keterangan</span></a><li>
       <div class="container"></div>
       @endif
-<li><a  href="tentang"><i class="fa fa-info-circle"></i> <span>Tentang</span></a><li>
+<li><a  href="about"><i class="fa fa-info-circle"></i> <span>Tentang</span></a><li>
   <div class="container"></div>

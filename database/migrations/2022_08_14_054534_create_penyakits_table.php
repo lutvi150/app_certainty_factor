@@ -18,6 +18,7 @@ class CreatePenyakitsTable extends Migration
             $table->string('nama_penyakit');
             $table->text('detail_penyakit')->nullable();
             $table->text('saran_penyakit')->nullable();
+            $table->text('image_penyakit')->nullable();
             $table->timestamps();
         });
     }

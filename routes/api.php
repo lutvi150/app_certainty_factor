@@ -25,3 +25,7 @@ Route::post('/gejalaUpdate', [Dashboard::class, 'gejalaUpdate'])->name('api-geja
 Route::post('/penyakitStore', [Dashboard::class, 'penyakitStore'])->name('api-penyakitStore');
 Route::post('/penyakitDelete', [Dashboard::class, 'penyakitDelete'])->name('api-penyakitDelete');
 Route::post('/penyakitUpdate', [Dashboard::class, 'penyakitUpdate'])->name('api-penyakitUpdate');
+// pengetahuan
+Route::post('/pengetahuanStore', [Dashboard::class, 'pengetahuanStore'])->name('api-pengetahuanStore');
+Route::post('/pengetahuanDelete', [Dashboard::class, 'pengetahuanDelete'])->name('api-pengetahuanDelete');
+Route::post('/pengetahuanUpdate', [Dashboard::class, 'pengetahuanUpdate'])->name('api-pengetahuanUpdate');

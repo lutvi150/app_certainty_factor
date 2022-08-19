@@ -1,11 +1,11 @@
 <title>Beranda - Certainty Factor</title>
 
 	<div class='row'>
-        <div class='col-lg-4 col-xs-6'>
+        <div class='col-lg-3 col-xs-6'>
           <!-- small box -->
           <div class='small-box bg-aqua'>
             <div class='inner'>
-              <h3> 3</h3>
+              <h3> {{ $gejala }}</h3>
               <p>Total Gejala</p>
             </div>
             <div class='icon'>
@@ -16,11 +16,11 @@
         <!-- ./col -->
 
         <!-- ./col -->
-        <div class="col-lg-4 col-xs-6">
+        <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-yellow">
             <div class="inner">
-              <h3>0</h3>
+              <h3>{{ $pengetahuan }}</h3>
 
               <p>Total Pengetahuan</p>
             </div>
@@ -30,12 +30,25 @@
           </div>
         </div>
         <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-green">
+              <div class="inner">
+                <h3> {{ $penyakit }}</h3>
 
-        <div class="col-lg-4 col-xs-6">
+                <p>Total Penyakit</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-bug"></i>
+              </div>
+            </div>
+          </div>
+          <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-red">
             <div class="inner">
-                <h3>0</h3>
+                <h3>{{ $user }}</h3>
               <p>Total Admin Pakar</p>
             </div>
             <div class="icon">

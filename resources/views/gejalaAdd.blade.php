@@ -23,6 +23,7 @@
 <script>
     function storeData() {
         $("#store").text('Menyimpan...');
+        $(".text-error").html('');
         $.ajax({
             type: "POST",
             url: "{{ route('api-gejalaStore') }}",

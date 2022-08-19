@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\basisPengetahuan;
 use App\Models\gejala;
 use App\Models\penyakit;
 use App\Models\User;
@@ -14,7 +15,11 @@ class Dashboard extends Controller
     public function Dashboard(Request $request)
     {
         $menu = 'beranda';
-        return view('dashboard', compact('menu'));
+        $penyakit = penyakit::count();
+        $gejala = gejala::count();
+        $user = User::count();
+        $pengetahuan = basisPengetahuan::count();
+        return view('dashboard', compact('menu', 'penyakit', 'gejala', 'user', 'pengetahuan'));
     }
     public function viewLogin(Request $request)
     {
@@ -169,7 +174,7 @@ class Dashboard extends Controller
             } else {
                 $penyakit = new penyakit;
                 $penyakit->nama_penyakit = $request->nama_penyakit;
-                $penyakit->detail_penyakit = $request->det_penyakit;
+                $penyakit->detail_penyakit = $request->detail_penyakit;
                 $penyakit->saran_penyakit = $request->saran_penyakit;
                 $penyakit->save();
                 $response = [
@@ -210,18 +215,68 @@ class Dashboard extends Controller
                 'msg' => $validation->errors()->all(),
             ];
         } else {
-            $checkPenyakit = penyakit::where('nama_penyakit', $request->nama_penyakit)->first();
-            if ($checkPenyakit) {
+            $penyakit = penyakit::find($request->id_penyakit);
+            $penyakit->nama_penyakit = $request->nama_penyakit;
+            $penyakit->detail_penyakit = $request->detail_penyakit;
+            $penyakit->saran_penyakit = $request->saran_penyakit;
+            $penyakit->save();
+            $response = [
+                'status' => 'success',
+                'msg' => 'Data berhasil disimpan',
+            ];
+        }
+        return response()->json($response);
+    }
+    // use for reasearh
+    public function pengetahuan(Type $var = null)
+    {
+        $menu = 'pengetahuan';
+        $pengetahuan = basisPengetahuan::orderBy('id_pengetahuan', 'desc')->join('penyakit', 'basis_pengetahuan.id_penyakit', '=', 'penyakit.id_penyakit')->join('gejala', 'basis_pengetahuan.id_gejala', '=', 'gejala.id_gejala')->get();
+        return view('dashboard', compact('menu', 'pengetahuan'));
+    }
+    public function pengetahuanAdd()
+    {
+        $menu = 'pengetahuanAdd';
+        $penyakit = penyakit::orderBy('id_penyakit', 'desc')->get();
+        $gejala = gejala::orderBy('id_gejala', 'desc')->get();
+        return view('dashboard', compact('menu', 'penyakit', 'gejala'));
+    }
+    public function pengetahuanStore(Request $request)
+    {
+        $rules = [
+            'id_penyakit' => 'required',
+            'id_gejala' => 'required',
+            'md' => 'required|numeric',
+            'mb' => 'required|numeric',
+        ];
+        $messages = [
+            'id_penyakit.required' => 'Penyakit harus diisi',
+            'id_gejala.required' => 'Gejala harus diisi',
+            'md.required' => 'MD harus diisi',
+            'mb.required' => 'MB harus diisi',
+            'md.numeric' => 'MD harus berupa angka',
+            'mb.numeric' => 'MB harus berupa angka',
+        ];
+        $validation = Validator::make($request->all(), $rules, $messages);
+        if ($validation->fails()) {
+            $response = [
+                'status' => 'failed',
+                'msg' => $validation->errors(),
+            ];
+        } else {
+            $checkPengetahuan = basisPengetahuan::where('id_penyakit', $request->id_penyakit)->where('id_gejala', $request->id_gejala)->first();
+            if ($checkPengetahuan) {
                 $response = [
                     'status' => 'data_ready',
-                    'msg' => 'Penyakit sudah ada',
+                    'msg' => 'Pengetahuan sudah ada',
                 ];
             } else {
-                $penyakit = penyakit::find($request->id_penyakit);
-                $penyakit->nama_penyakit = $request->nama_penyakit;
-                $penyakit->detail_penyakit = $request->det_penyakit;
-                $penyakit->saran_penyakit = $request->saran_penyakit;
-                $penyakit->save();
+                $pengetahuan = new basisPengetahuan;
+                $pengetahuan->id_penyakit = $request->id_penyakit;
+                $pengetahuan->id_gejala = $request->id_gejala;
+                $pengetahuan->md = $request->md;
+                $pengetahuan->mb = $request->mb;
+                $pengetahuan->save();
                 $response = [
                     'status' => 'success',
                     'msg' => 'Data berhasil disimpan',
@@ -229,4 +284,65 @@ class Dashboard extends Controller
         }
         return response()->json($response);
     }
+    public function pengetahuanDelete(Request $request)
+    {
+        $pengetahuan = basisPengetahuan::find($request->id_pengetahuan);
+        $pengetahuan->delete();
+        $response = [
+            'status' => 'success',
+            'msg' => 'Data berhasil dihapus',
+        ];
+        return response()->json($response);
+    }
+    public function pengetahuanEdit($id_pengetahuan)
+    {
+        $menu = 'pengetahuanEdit';
+        $pengetahuan = basisPengetahuan::find($id_pengetahuan);
+        $penyakit = penyakit::all();
+        $gejala = gejala::all();
+        return view('dashboard', compact('menu', 'pengetahuan', 'penyakit', 'gejala'));
+    }
+    public function pengetahuanUpdate(Request $request)
+    {
+        $rules = [
+            'id_penyakit' => 'required',
+            'id_gejala' => 'required',
+            'md' => 'required|numeric',
+            'mb' => 'required|numeric',
+        ];
+        $messages = [
+            'id_penyakit.required' => 'Penyakit harus diisi',
+            'id_gejala.required' => 'Gejala harus diisi',
+            'md.required' => 'MD harus diisi',
+            'mb.required' => 'MB harus diisi',
+            'md.numeric' => 'MD harus berupa angka',
+            'mb.numeric' => 'MB harus berupa angka',
+        ];
+        $validation = Validator::make($request->all(), $rules, $messages);
+        if ($validation->fails()) {
+            $response = [
+                'status' => 'failed',
+                'msg' => $validation->errors()->all(),
+            ];
+        } else {
+            $pengetahuan = basisPengetahuan::find($request->id_pengetahuan);
+            $pengetahuan->id_penyakit = $request->id_penyakit;
+            $pengetahuan->id_gejala = $request->id_gejala;
+            $pengetahuan->md = $request->md;
+            $pengetahuan->mb = $request->mb;
+            $pengetahuan->save();
+            $response = [
+                'status' => 'success',
+                'msg' => 'Data berhasil disimpan',
+            ];
+        }
+        return response()->json($response);
+    }
+    // use for about app
+    public function about(Type $var = null)
+    {
+        $menu = 'about';
+        return view('dashboard', compact('menu'));
+    }
+
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ControllerUser;
 use App\Http\Controllers\Dashboard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -32,3 +33,11 @@ Route::get('/gejala-edit/{id}', [Dashboard::class, 'gejalaEdit'])->name('gejala-
 Route::get('/penyakit', [Dashboard::class, 'penyakit'])->name('penyakit');
 Route::get('/penyakit-add', [Dashboard::class, 'penyakitAdd'])->name('penyakit-add');
 Route::get('/penyakit-edit/{id}', [Dashboard::class, 'penyakitEdit'])->name('penyakit-edit');
+// pengetahuan
+Route::get('/pengetahuan', [Dashboard::class, 'pengetahuan'])->name('pengetahuan');
+Route::get('/pengetahuan-add', [Dashboard::class, 'pengetahuanAdd'])->name('pengetahuan-add');
+Route::get('/pengetahuan-edit/{id}', [Dashboard::class, 'pengetahuanEdit'])->name('pengetahuan-edit');
+// about
+Route::get('/about', [Dashboard::class, 'about'])->name('about');
+Route::get('/diagnosa', [ControllerUser::class, 'diagnosa'])->name('diagnosa');
+Route::post('/make-diagnosa', [ControllerUser::class, 'makeDiagnosa'])->name('make-diagnosa');
