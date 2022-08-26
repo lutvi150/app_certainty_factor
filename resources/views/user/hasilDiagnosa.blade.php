@@ -24,10 +24,10 @@
 
         </table>
         <div class="well well-small"><img class="card-img-top img-bordered-sm" style="float:right; margin-left:15px;"
-                src="{{ asset('assets/images/noimage.png') }}" height="200">
+                src="{{ asset($gambar) }}" height="200">
             <h3>Hasil Diagnosa</h3>
             <div class="callout callout-default">Jenis penyakit yang diderita adalah <b></b>
-                <h3 class="text text-success"><b></b> / 0 % ()<br></h3>
+                <h3 class="text text-success"><b></b>{{ $nmpkt[1] }} / {{ round($vlpkt[1],2) }} % ({{ $vlpkt[1] }})<br></h3>
             </div>
         </div>
         <div class="box box-info box-solid">
@@ -35,7 +35,7 @@
                 <h3 class="box-title">Detail</h3>
             </div>
             <div class="box-body">
-                <h4></h4>
+                <h4>{{ $ardpkt[$idpkt[1]] }}</h4>
             </div>
         </div>
         <div class="box box-warning box-solid">
@@ -43,7 +43,7 @@
                 <h3 class="box-title">Saran</h3>
             </div>
             <div class="box-body">
-                <h4></h4>
+                <h4>{{ $arspkt[$idpkt[1]] }}</h4>
             </div>
         </div>
         <div class="box box-danger box-solid">
@@ -51,7 +51,10 @@
                 <h3 class="box-title">Kemungkinan lain:</h3>
             </div>
             <div class="box-body">
-                <h4></h4>
+                @for ($ipl = 2; $ipl < count($idpkt); $ipl++)
+                <h4><i class='fa fa-caret-square-o-right'></i> {{  $nmpkt[$ipl]}}</b> / {{ round($vlpkt[$ipl], 2) }} % ({{ $vlpkt[$ipl] }})<br></h4>
+                @endfor
+
             </div>
         </div>
     </div>

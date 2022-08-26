@@ -39,10 +39,10 @@ class ControllerUser extends Controller
         // get kode penyakit and make array
         $sqlpenyakit = penyakit::all();
         foreach ($sqlpenyakit as $key => $value) {
-            $arkodepenyakit[$value->id_penyakit] = $value->nama_penyakit;
-            // $arkodepenyakit[$value->id_penyakit] = $value->detail_penyakit;
-            // $arkodepenyakit[$value->id_penyakit] = $value->saran_penyakit;
-            // $arkodepenyakit[$value->id_penyakit] = $value->image_penyakit;
+            $arpkt[$value->id_penyakit] = $value->nama_penyakit;
+            $ardpkt[$value->id_penyakit] = $value->detail_penyakit;
+            $arspkt[$value->id_penyakit] = $value->saran_penyakit;
+            $argpkt[$value->id_penyakit] = $value->image_penyakit;
         }
         // -------- perhitungan certainty factor (CF) ---------
         // --------------------- START ------------------------
@@ -103,27 +103,29 @@ class ControllerUser extends Controller
                 "data" => gejala::where('id_gejala', $key)->first(),
             ];
         }
+        $np = 0;
+        foreach ($arpenyakit as $key => $value) {
+            $np++;
+            $idpkt[$np] = $key;
+            $nmpkt[$np] = $arpkt[$key];
+            $vlpkt[$np] = $value;
+        }
+        if ($argpkt[$idpkt[1]]) {
+            // $gambar = 'gambar/penyakit/' . $argpkt[$idpkt[1]];
+            $gambar = 'assets/gambar/noimage.png';
+        } else {
+            $gambar = 'assets/gambar/noimage.png';
+        }
         // send result gejala toview
-        // $menu = 'user.hasilDiagnosa';
-        // $showResultGejala = $resultGejala;
-        // return view('dashboard', compact('menu', 'showResultGejala'));
-        // exit;
+        $menu = 'user.hasilDiagnosa';
+        $jenisPenyakitDiderita = $nmpkt[1];
+        $showResultGejala = $resultGejala;
+        return view('dashboard', compact('menu', 'showResultGejala', 'gambar', 'vlpkt', 'nmpkt', 'idpkt', 'ardpkt', 'arspkt'));
+        exit;
         return response()->json(['gejala' => $resultGejala, 'arkondisi' => $argejala]);
         exit;
         if ($_POST['submit']) {
 
-            $np = 0;
-            foreach ($arpenyakit as $key => $value) {
-                $np++;
-                $idpkt[$np] = $key;
-                $nmpkt[$np] = $arpkt[$key];
-                $vlpkt[$np] = $value;
-            }
-            if ($argpkt[$idpkt[1]]) {
-                $gambar = 'gambar/penyakit/' . $argpkt[$idpkt[1]];
-            } else {
-                $gambar = 'gambar/noimage.png';
-            }
             echo "</table><div class='well well-small'><img class='card-img-top img-bordered-sm' style='float:right; margin-left:15px;' src='" . $gambar . "' height=200><h3>Hasil Diagnosa</h3>";
             echo "<div class='callout callout-default'>Jenis penyakit yang diderita adalah <b><h3 class='text text-success'>" . $nmpkt[1] . "</b> / " . round($vlpkt[1], 2) . " % (" . $vlpkt[1] . ")<br></h3>";
             echo "</div></div><div class='box box-info box-solid'><div class='box-header with-border'><h3 class='box-title'>Detail</h3></div><div class='box-body'><h4>";
