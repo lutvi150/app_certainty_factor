@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\basisPengetahuan;
 use App\Models\gejala;
 use App\Models\penyakit;
+use App\Models\post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 
 class Dashboard extends Controller
@@ -158,6 +160,13 @@ class Dashboard extends Controller
         $messages = [
             'nama_penyakit.required' => 'Penyakit harus diisi',
         ];
+        if ($request->image_penyakit) {
+            $rules[] = ['image_penyakit' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'];
+            $messages[] = [
+                'image_penyakit.image' => 'Foto Produk harus berupa gambar',
+                'image_penyakit.mimes' => 'Foto Produk harus berupa gambar',
+                'image_penyakit.max' => 'Foto Produk tidak boleh lebih dari 2MB'];
+        }
         $validation = Validator::make($request->all(), $rules, $messages);
         if ($validation->fails()) {
             $response = [
@@ -172,16 +181,26 @@ class Dashboard extends Controller
                     'msg' => 'Penyakit sudah ada',
                 ];
             } else {
+                $filename = '-';
+                if ($request->image_penyakit) {
+                    $image = $request->image_penyakit;
+                    $destionationPath = 'image_penyakit/';
+                    $extention = $image->getClientOriginalExtension();
+                    $filename = time() . "." . $extention;
+                    $image->move($destionationPath, $filename);
+                }
                 $penyakit = new penyakit;
                 $penyakit->nama_penyakit = $request->nama_penyakit;
                 $penyakit->detail_penyakit = $request->detail_penyakit;
                 $penyakit->saran_penyakit = $request->saran_penyakit;
+                $penyakit->image_penyakit = $filename;
                 $penyakit->save();
                 $response = [
                     'status' => 'success',
                     'msg' => 'Data berhasil disimpan',
                 ];}
         }
+        $response[] = ['data' => $request->all()];
         return response()->json($response);
     }
     public function penyakitDelete(Request $request)
@@ -208,6 +227,13 @@ class Dashboard extends Controller
         $messages = [
             'nama_penyakit.required' => 'Penyakit harus diisi',
         ];
+        if ($request->image_penyakit) {
+            $rules[] = ['image_penyakit' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'];
+            $messages[] = [
+                'image_penyakit.image' => 'Foto Produk harus berupa gambar',
+                'image_penyakit.mimes' => 'Foto Produk harus berupa gambar',
+                'image_penyakit.max' => 'Foto Produk tidak boleh lebih dari 2MB'];
+        }
         $validation = Validator::make($request->all(), $rules, $messages);
         if ($validation->fails()) {
             $response = [
@@ -215,7 +241,20 @@ class Dashboard extends Controller
                 'msg' => $validation->errors()->all(),
             ];
         } else {
+
             $penyakit = penyakit::find($request->id_penyakit);
+            if ($request->image_penyakit) {
+                $checkImage = penyakit::where('id_penyakit', $request->id_penyakit)->first()->image_penyakit;
+                if (file_exists('image_penyakit/' . $checkImage)) {
+                    // unlink('image_penyakit/' . $checkImage);
+                }
+                $image = $request->image_penyakit;
+                $destionationPath = 'image_penyakit/';
+                $extention = $image->getClientOriginalExtension();
+                $filename = time() . "." . $extention;
+                $image->move($destionationPath, $filename);
+                $penyakit->image_penyakit = $filename;5
+            }
             $penyakit->nama_penyakit = $request->nama_penyakit;
             $penyakit->detail_penyakit = $request->detail_penyakit;
             $penyakit->saran_penyakit = $request->saran_penyakit;
@@ -343,6 +382,132 @@ class Dashboard extends Controller
     {
         $menu = 'about';
         return view('dashboard', compact('menu'));
+    }
+    // post
+    public function post(Type $var = null)
+    {
+        $menu = 'post';
+        $post = post::paginate(15);
+        return view('dashboard', compact('menu', 'post'));
+    }
+    public function postAdd(Type $var = null)
+    {
+        $menu = 'postAdd';
+        return view('dashboard', compact('menu'));
+    }
+    public function postStore(Request $request)
+    {
+        $rules = [
+            'detail_post' => 'required',
+            'saran_post' => 'required',
+            'nama_post' => 'required',
+        ];
+        $messages = [
+            'detail_post.required' => 'Detail Keterangan Tidak Boleh Kosong',
+            'saran_post.required' => 'Saran Keterangan Tidak Boleh Kosong',
+            'nama_post' => 'Nama Keterangan Tidak Boleh Kosong',
+        ];
+        if ($request->gambar) {
+            $rules[] = ['gambar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'];
+            $messages[] = [
+                'gambar.image' => 'Foto Produk harus berupa gambar',
+                'gambar.mimes' => 'Foto Produk harus berupa gambar',
+                'gambar.max' => 'Foto Produk tidak boleh lebih dari 2MB'];
+        }
+        $validation = Validator::make($request->all(), $rules, $messages);
+        if ($validation->fails()) {
+            $response = [
+                'status' => 'failed',
+                'msg' => $validation->errors(),
+            ];
+        } else {
+            $filename = null;
+            if ($request->gambar) {
+                $image = $request->gambar;
+                $destionationPath = 'image_penyakit/';
+                $extention = $image->getClientOriginalExtension();
+                $filename = time() . "-image-post." . $extention;
+                $image->move($destionationPath, $filename);
+            }
+            $post = new post;
+            $post->nama_post = $request->nama_post;
+            $post->detail_post = $request->detail_post;
+            $post->saran_post = $request->saran_post;
+            $post->gambar = $filename;
+            $post->save();
+            $response = [
+                'status' => 'success',
+                'msg' => 'Data post berhasil di simpan',
+            ];
+
+        }
+        return response()->json($response);
+    }
+    public function postEdit($id = null)
+    {
+        if ($id == null) {
+            return redirect('/');
+        }
+        $menu = 'postEdit';
+        $data = post::find(Crypt::decryptString($id))->first();
+        return view('dashboard', compact('menu', 'data'));
+    }
+    public function postUpdate(Request $request)
+    {
+        $rules = [
+            'detail_post' => 'required',
+            'saran_post' => 'required',
+            'nama_post' => 'required',
+        ];
+        $messages = [
+            'detail_post.required' => 'Detail Keterangan Tidak Boleh Kosong',
+            'saran_post.required' => 'Saran Keterangan Tidak Boleh Kosong',
+            'nama_post' => 'Nama Keterangan Tidak Boleh Kosong',
+        ];
+        if ($request->gambar) {
+            $rules[] = ['gambar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'];
+            $messages[] = [
+                'gambar.image' => 'Foto Produk harus berupa gambar',
+                'gambar.mimes' => 'Foto Produk harus berupa gambar',
+                'gambar.max' => 'Foto Produk tidak boleh lebih dari 2MB'];
+        }
+        $validation = Validator::make($request->all(), $rules, $messages);
+        if ($validation->fails()) {
+            $response = [
+                'status' => 'failed',
+                'msg' => $validation->errors(),
+            ];
+        } else {
+            $post = post::find($request->id);
+            if ($request->gambar) {
+                $image = $request->gambar;
+                $destionationPath = 'image_penyakit/';
+                $extention = $image->getClientOriginalExtension();
+                $filename = time() . "-image-post." . $extention;
+                $image->move($destionationPath, $filename);
+                $post->gambar = $filename;
+            }
+            $post->nama_post = $request->nama_post;
+            $post->detail_post = $request->detail_post;
+            $post->saran_post = $request->saran_post;
+            $post->save();
+            $response = [
+                'status' => 'success',
+                'msg' => 'Data post berhasil di simpan',
+            ];
+
+        }
+        return response()->json($response);
+    }
+    public function postDelete(Request $request)
+    {
+        $post = post::find($request->id);
+        $post->delete();
+        $response = [
+            'status' => 'success',
+            'msg' => 'Data berhasil dihapus',
+        ];
+        return response()->json($response);
     }
 
 }

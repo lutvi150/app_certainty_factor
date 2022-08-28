@@ -18,9 +18,9 @@
       {{-- use user for user --}}
     <li><a href="diagnosa"><i class="fa fa-search-plus"></i> <span>Diagnosa</span></a><li>
       <div class="container"></div>
-    <li><a  href="riwayat"><i class="fa fa-clock-o"></i> <span>Riwayat</span></a><li>
+<li><a  href="riwayat"><i class="fa fa-clock-o"></i> <span>Riwayat</span></a><li>
       <div class="container"></div>
-    <li><a  href="keterangan"><i class="fa fa-commenting-o"></i> <span>Keterangan</span></a><li>
+    <li><a  href="keterangan-user"><i class="fa fa-commenting-o"></i> <span>Keterangan</span></a><li>
       <div class="container"></div>
       @endif
 <li><a  href="about"><i class="fa fa-info-circle"></i> <span>Tentang</span></a><li>

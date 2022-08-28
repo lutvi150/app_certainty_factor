@@ -45,13 +45,14 @@
     <script src="{{asset('assets/app.js')}}"></script>
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
 <script src="{{asset('js/app.js')}}"></script>
+<script src="{{ asset('assets/form-master/dist/jquery.form.min.js') }}"></script>
 </head>
 <style>
     .text-error{
         color: #a94442;
     }
 </style>
-<body id="pakarayam" class="hold-transition skin-purple-light sidebar-mini">
+<body id="pakar-certain" class="hold-transition skin-purple-light sidebar-mini">
     <div class="wrapper">
         <!-- Main Header -->
         <header class="main-header">

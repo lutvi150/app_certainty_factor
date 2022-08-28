@@ -1,6 +1,6 @@
 <div class="box-body">
-
         <br><br>
+        <form action="#" id="post-penyakit" enctype="multipart/form-data" method="post">
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -19,16 +19,26 @@
                             placeholder="Masukkan saran penyakit baru..."></textarea></td>
                 </tr>
                 <tr>
+                    <td width="120">Foto</td>
+                    <td><input autocomplete="off" type="file" placeholder="Masukkan penyakit baru..."
+                            class="form-control" name="image_penyakit" size="30"><br><span class="text-error efoto_penyakit"></span></td>
+                </tr>
+                <tr>
                     <td></td>
                     <td>
-                        <button type="button" class="btn btn-success" name="store" id="storeData" onclick="storeData()">Simpan</button>
+                        <button type="button" class="btn btn-success" name="store" id="storeData">Simpan</button>
                         <input class="btn btn-danger" type="button" name="batal" value="Batal"
                             onclick="window.location.href='{{ route('penyakit') }}';"></td>
                 </tr>
             </tbody>
         </table>
+    </form>
 </div>
 <script>
+    $("#storeData").click(function (e) {
+        e.preventDefault();
+        storeData();
+    });
     function storeData() {
         $("#storeData").text('Menyimpan...');
         var nama_penyakit = $('input[name=nama_penyakit]').val();
@@ -38,14 +48,11 @@
             $('.enama_penyakit').html('Nama penyakit tidak boleh kosong');
         } else {
             $('.enama_penyakit').html('');
-            $.ajax({
+            $("#post-penyakit").ajaxForm({
                 url: '{{ route('api-penyakitStore') }}',
                 type: 'POST',
                 data: {
                     '_token': '{{ csrf_token() }}',
-                    'nama_penyakit': nama_penyakit,
-                    'detail_penyakit': det_penyakit,
-                    'saran_penyakit': srn_penyakit
                 },
                 success: function (data) {
                     $("#storeData").text('Simpan');
@@ -67,7 +74,7 @@
                     $("#storeData").text('Simpan');
                     console.log(data);
                 }
-            });
+            }).submit();
         }
      }
 </script>

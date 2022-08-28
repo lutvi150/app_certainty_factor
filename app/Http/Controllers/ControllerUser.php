@@ -7,7 +7,9 @@ use App\Models\gejala;
 use App\Models\hasil;
 use App\Models\kondisi;
 use App\Models\penyakit;
+use App\Models\post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class ControllerUser extends Controller
 {
@@ -50,7 +52,7 @@ class ControllerUser extends Controller
         $sqlpenyakit = penyakit::all();
         foreach ($sqlpenyakit as $key => $rpenyakit) {
             $cf = 0;
-            $sqlgejala = basisPengetahuan::where('id_penyakit', $value->id_penyakit)->get();
+            $sqlgejala = basisPengetahuan::where('id_penyakit', $rpenyakit->id_penyakit)->get();
             $cflama = 0;
             foreach ($sqlgejala as $key => $rgejala) {
                 $arkondisi = explode("_", $request->kondisi[0]);
@@ -64,7 +66,7 @@ class ControllerUser extends Controller
                             $cflama = $cflama + ($cf * (1 - $cflama));
                         }
                         if ($cf * $cflama < 0) {
-                            $cflama = ($cflama + $cf) / (1 - Math . Min(Math . abs($cflama), Math . abs($cf)));
+                            $cflama = ($cflama + $cf) / (1 - Min(abs($cflama), abs($cf)));
                         }
                         if (($cf < 0) && ($cf * $cflama >= 0)) {
                             $cflama = $cflama + ($cf * (1 + $cflama));
@@ -111,10 +113,10 @@ class ControllerUser extends Controller
             $vlpkt[$np] = $value;
         }
         if ($argpkt[$idpkt[1]]) {
-            // $gambar = 'gambar/penyakit/' . $argpkt[$idpkt[1]];
-            $gambar = 'assets/gambar/noimage.png';
+            // $gambar = 'images/penyakit/' . $argpkt[$idpkt[1]];
+            $gambar = 'image_penyakit/' . $argpkt[$idpkt[1]];
         } else {
-            $gambar = 'assets/gambar/noimage.png';
+            $gambar = 'assets/images/noimage.png';
         }
         // send result gejala toview
         $menu = 'user.hasilDiagnosa';
@@ -123,75 +125,109 @@ class ControllerUser extends Controller
         return view('dashboard', compact('menu', 'showResultGejala', 'gambar', 'vlpkt', 'nmpkt', 'idpkt', 'ardpkt', 'arspkt'));
         exit;
         return response()->json(['gejala' => $resultGejala, 'arkondisi' => $argejala]);
-        exit;
-        if ($_POST['submit']) {
 
-            echo "</table><div class='well well-small'><img class='card-img-top img-bordered-sm' style='float:right; margin-left:15px;' src='" . $gambar . "' height=200><h3>Hasil Diagnosa</h3>";
-            echo "<div class='callout callout-default'>Jenis penyakit yang diderita adalah <b><h3 class='text text-success'>" . $nmpkt[1] . "</b> / " . round($vlpkt[1], 2) . " % (" . $vlpkt[1] . ")<br></h3>";
-            echo "</div></div><div class='box box-info box-solid'><div class='box-header with-border'><h3 class='box-title'>Detail</h3></div><div class='box-body'><h4>";
-            echo $ardpkt[$idpkt[1]];
-            echo "</h4></div></div>
-                    <div class='box box-warning box-solid'><div class='box-header with-border'><h3 class='box-title'>Saran</h3></div><div class='box-body'><h4>";
-            echo $arspkt[$idpkt[1]];
-            echo "</h4></div></div>
-                    <div class='box box-danger box-solid'><div class='box-header with-border'><h3 class='box-title'>Kemungkinan lain:</h3></div><div class='box-body'><h4>";
-            for ($ipl = 2; $ipl < count($idpkt); $ipl++) {
-                echo " <h4><i class='fa fa-caret-square-o-right'></i> " . $nmpkt[$ipl] . "</b> / " . round($vlpkt[$ipl], 2) . " % (" . $vlpkt[$ipl] . ")<br></h4>";
+    }
+    public function history()
+    {
+        $menu = 'history';
+        $history = hasil::join('penyakit', 'hasil.hasil_id', '=', 'penyakit.id_penyakit')->paginate(15);
+        return view('dashboard', compact('menu', 'history'));
+    }
+    public function chartHistory(Type $var = null)
+    {
+        $hasil = hasil::select('hasil_id')->groupBy('hasil_id')->get();
+        $result = [];
+        if ($hasil) {
+            foreach ($hasil as $key => $value) {
+                $penyakit = penyakit::where('id_penyakit', $value->hasil_id)->first();
+                $result[] = [
+                    'label' => $penyakit->nama_penyakit,
+                    'data' => hasil::where('hasil_id', $value->hasil_id)->count(),
+                ];
             }
-            echo "</div></div>
-                    </div>";
-        } else {
-            echo "
-               <h2 class='text text-primary'>Diagnosa Penyakit</h2>  <hr>
-               <div class='alert alert-success alert-dismissible'>
-                          <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>×</button>
-                          <h4><i class='icon fa fa-exclamation-triangle'></i>Perhatian !</h4>
-                          Silahkan memilih gejala sesuai dengan kondisi ayam anda, anda dapat memilih kepastian kondisi ayam dari pasti tidak sampai pasti ya, jika sudah tekan tombol proses (<i class='fa fa-search-plus'></i>)  di bawah untuk melihat hasil.
-                        </div>
-                  <form name=text_form method=POST action='diagnosa' >
-                     <table class='table table-bordered table-striped konsultasi'><tbody class='pilihkondisi'>
-                     <tr><th>No</th><th>Kode</th><th>Gejala</th><th width='20%'>Pilih Kondisi</th></tr>";
-
-            $sql3 = mysqli_query($conn, "SELECT * FROM gejala order by kode_gejala");
-            $i = 0;
-            while ($r3 = mysqli_fetch_array($sql3)) {
-                $i++;
-                echo "<tr><td class=opsi>$i</td>";
-                echo "<td class=opsi>G" . str_pad($r3[kode_gejala], 3, '0', STR_PAD_LEFT) . "</td>";
-                echo "<td class=gejala>$r3[nama_gejala]</td>";
-                echo '<td class="opsi"><select name="kondisi[]" id="sl' . $i . '" class="opsikondisi"/><option data-id="0" value="0">Pilih jika sesuai</option>';
-                $s = "select * from kondisi order by id";
-                $q = mysqli_query($conn, $s) or die($s);
-                while ($rw = mysqli_fetch_array($q)) {
-                    ?>
-                    <option data-id="<?php echo $rw['id']; ?>" value="<?php echo $r3['kode_gejala'] . '_' . $rw['id']; ?>"><?php echo $rw['kondisi']; ?></option>
-                    <?php
-}
-                echo '</select></td>';
-                ?>
-                  <script type="text/javascript">
-                    $(document).ready(function () {
-                      var arcolor = new Array('#ffffff', '#cc66ff', '#019AFF', '#00CBFD', '#00FEFE', '#A4F804', '#FFFC00', '#FDCD01', '#FD9A01', '#FB6700');
-                      setColor();
-                      $('.pilihkondisi').on('change', 'tr td select#sl<?php echo $i; ?>', function () {
-                        setColor();
-                      });
-                      function setColor()
-                      {
-                        var selectedItem = $('tr td select#sl<?php echo $i; ?> :selected');
-                        var color = arcolor[selectedItem.data("id")];
-                        $('tr td select#sl<?php echo $i; ?>.opsikondisi').css('background-color', color);
-                        console.log(color);
-                      }
-                    });
-                  </script>
-                  <?php
-echo "</tr>";
-            }
-            echo "
-                    <input class='float' type=submit data-toggle='tooltip' data-placement='top' title='Klik disini untuk melihat hasil diagnosa' name=submit value='&#xf00e;' style='font-family:Arial, FontAwesome'>
-                    </tbody></table></form>";
         }
+        return response()->json($result);
+    }
+    public function historyDetail(Request $request, $id = null)
+    {
+        if ($id == null) {
+            return redirect('/');
+        }
+        $hasil_id = Crypt::decryptString($id);
+        // color
+        $arcolor = ['#ffffff', '#cc66ff', '#019AFF', '#00CBFD', '#00FEFE', '#A4F804', '#FFFC00', '#FDCD01', '#FD9A01', '#FB6700'];
+        $inptanggal = date('Y-m-d H:i:s');
+        $arbobot = ['0', '1', '0.8', '0.6', '0.4', '-0.2', '-0.4', '-0.6', '-0.8', '-1'];
+        $argejala = [];
+        // for ($i = 0; $i < count($request->kondisi); $i++) {
+        //     $arkondisi = explode("_", $request->kondisi[$i]);
+        //     if (strlen($request->kondisi[$i]) > 1) {
+        //         $argejala += array($arkondisi[0] => $arkondisi[1]);
+        //     }
+        // }
+        // get kondisi and make array
+        $sqlkondisi = kondisi::all();
+        foreach ($sqlkondisi as $key => $value) {
+            $arkondisitext[$value->id_kondisi] = $value->kondisi;
+        }
+        // get kode penyakit and make array
+        $sqlpenyakit = penyakit::all();
+        foreach ($sqlpenyakit as $key => $value) {
+            $arpkt[$value->id_penyakit] = $value->nama_penyakit;
+            $ardpkt[$value->id_penyakit] = $value->detail_penyakit;
+            $arspkt[$value->id_penyakit] = $value->saran_penyakit;
+            $argpkt[$value->id_penyakit] = $value->image_penyakit;
+        }
+        $sqlhasil = hasil::where('id_hasil', $hasil_id)->get();
+        foreach ($sqlhasil as $key => $value) {
+            $arpenyakit = unserialize($value->penyakit);
+            $argejala = unserialize($value->gejala);
+        }
+        $np1 = 0;
+        foreach ($arpenyakit as $key1 => $value1) {
+            $np1++;
+            $idpkt1[$np1] = $key1;
+            $vlpkt1[$np1] = $value1;
+        }
+        $resultGejala = [];
+        foreach ($argejala as $key => $value) {
+            $resultGejala[] = (object) [
+                "color" => $arcolor[$value],
+                "kondisi_test" => $arkondisitext[$value],
+                "data" => gejala::where('id_gejala', $key)->first(),
+            ];
+        }
+        $np = 0;
+        foreach ($arpenyakit as $key => $value) {
+            $np++;
+            $idpkt[$np] = $key;
+            $nmpkt[$np] = $arpkt[$key];
+            $vlpkt[$np] = $value;
+        }
+        if ($argpkt[$idpkt[1]]) {
+            $gambar = 'image_penyakit/' . $argpkt[$idpkt[1]];
+            // $gambar = 'image_penyakit/'.;
+        } else {
+            $gambar = 'assets/images/noimage.png';
+        }
+        // send result gejala toview
+        $menu = 'user.hasilDiagnosa';
+        $jenisPenyakitDiderita = $nmpkt[1];
+        $showResultGejala = $resultGejala;
+        return view('dashboard', compact('menu', 'showResultGejala', 'gambar', 'vlpkt', 'nmpkt', 'idpkt', 'ardpkt', 'arspkt'));
+    }
+    // use for support
+    public function support(Type $var = null)
+    {
+        $menu = 'support';
+        return view('dashboard', compact('menu'));
+    }
+    // keterangan
+    public function keterangan(Type $var = null)
+    {
+        $menu = 'keterangan';
+        $keterangan = post::all();
+        return view('dashboard', compact('menu', 'keterangan'));
     }
 
 }

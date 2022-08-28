@@ -1,4 +1,4 @@
-const mix = require('laravel-mix');
+const mix = require("laravel-mix");
 
 /*
  |--------------------------------------------------------------------------
@@ -11,13 +11,17 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-    .postCss('resources/css/app.css', 'public/css', [
+mix.js("resources/js/app.js", "public/js").postCss(
+    "resources/css/app.css",
+    "public/css",
+    [
         //
-    ]);
-mix.scripts([
-    'node_modules/sweetalert/dist/sweetalert.min.js',
-    'node_modules/izitoast/dist/js/iziToast.js'
-], 'public/js/app.js').styles([
-    'node_modules/izitoast/dist/css/iziToast.css',
-], 'public/css/app.css');
+    ]
+);
+mix.scripts(
+    [
+        "node_modules/sweetalert/dist/sweetalert.min.js",
+        "node_modules/izitoast/dist/js/iziToast.js",
+    ],
+    "public/js/app.js"
+).styles(["node_modules/izitoast/dist/css/iziToast.css"], "public/css/app.css");
