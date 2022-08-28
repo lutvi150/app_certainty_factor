@@ -253,7 +253,7 @@ class Dashboard extends Controller
                 $extention = $image->getClientOriginalExtension();
                 $filename = time() . "." . $extention;
                 $image->move($destionationPath, $filename);
-                $penyakit->image_penyakit = $filename;5
+                $penyakit->image_penyakit = $filename;
             }
             $penyakit->nama_penyakit = $request->nama_penyakit;
             $penyakit->detail_penyakit = $request->detail_penyakit;
